@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Enviar Mensagem por WhatsApp</title>
+</head>
+<body>
+  <br>
+  <div class="text-center">
+    <h1 class="text-center">Escolha um Pacote e o Serviço e nós entramos em contato</h1>
+    <button class="selecionar" onclick="abrirPromptPacotesEServicos()">Enviar</button>
+  </div>
+  <!-- Seu código JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+  <script>
+    function abrirPromptPacotesEServicos() {
+      const pacotes = ['Pacote 1', 'Pacote 2', 'Pacote 3', 'Pacote 4', 'Pacote 5', 'Pacote 6', 'Pacote 7', 'Pacote Especial'];
+      const servicos = ['Empregada Doméstica', 'Serviços de Enfermagem', 'Cuidados a idosos', 'Acompanhamento Hospitalar', 'Cuidador da Criança'];
+
+      Swal.mixin({
+        title: 'Escolha um Pacote e o Serviço',
+        html:
+          '<input id="swal-input1" class="swal2-input" placeholder="Nome">' +
+          '<input id="swal-input2" class="swal2-input" placeholder="Contacto">',
+        input: 'select',
+        inputOptions: {
+          'Pacotes': pacotes,
+        },
+        inputAttributes: {
+          multiple: 'multiple'
+        },
+        confirmButtonText: 'Próximo',
+        showCancelButton: true,
+        preConfirm: (result) => {
+          if (result && result.length === 1) {
+            const pacoteSelecionado = pacotes[result[0]];
+
+            return Swal.fire({
+              title: 'Escolha o Tipo de Serviço',
+              input: 'select',
+              inputOptions: {
+                'Tipos de Serviço': servicos
+              },
+              showCancelButton: true,
+              confirmButtonText: 'Enviar WhatsApp',
+              preConfirm: (result) => {
+                if (result) {
+                  const tipoServicoSelecionado = servicos[result];
+
+                  const nome = document.getElementById('swal-input1').value;
+                  const telefone = document.getElementById('swal-input2').value;
+
+                  if (nome && telefone) {
+                    const opcoesTexto = "Nome: " + nome + "\nTelefone: " + telefone + "\n\nPacote: " + pacoteSelecionado + "\nTipo de Serviço: " + tipoServicoSelecionado + "\n";
+
+                    // Substitua "NUMERO_TELEFONE" pelo número de telefone do destinatário no formato internacional (por exemplo, "+551234567890")
+                    const numeroDestinatario = '+351968860547';
+                    const mensagem = encodeURIComponent(opcoesTexto);
+                    const whatsappLink = `https://api.whatsapp.com/send?phone=${numeroDestinatario}&text=${mensagem}`;
+
+                    window.open(whatsappLink, '_blank');
+                  } else {
+                    Swal.showValidationMessage("Por favor, preencha todos os campos.");
+                  }
+                }
+              }
+            });
+          } else {
+            Swal.showValidationMessage("Selecione um pacote.");
+          }
+        }
+      }).fire();
+    }
+  </script>
+</body>
+</html>
+
